@@ -374,6 +374,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
         $media                 = 'screen';
         $conditionalStylesheet = false;
         $href                  = array_shift($args);
+        $extras                = array();
 
         if ($this->_isDuplicateStylesheet($href)) {
             return false;
