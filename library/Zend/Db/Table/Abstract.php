@@ -1312,9 +1312,6 @@ abstract class Zend_Db_Table_Abstract
         // issue ZF-5775 (empty where clause should return empty rowset)
         if ($whereClause == null) {
             $rowsetClass = $this->getRowsetClass();
-            if (!class_exists($rowsetClass)) {
-                Zend_Loader::loadClass($rowsetClass);
-            }
             return new $rowsetClass(array('table' => $this, 'rowClass' => $this->getRowClass(), 'stored' => true));
         }
 
@@ -1546,15 +1543,6 @@ abstract class Zend_Db_Table_Abstract
 
             if ($tableDefinition !== null && $tableDefinition->hasTableConfig($tableName)) {
                 return new Zend_Db_Table($tableName, $tableDefinition);
-            }
-        }
-
-        // assume the tableName is the class name
-        if (!class_exists($tableName)) {
-            try {
-                Zend_Loader::loadClass($tableName);
-            } catch (Zend_Exception $e) {
-                throw new Zend_Db_Table_Row_Exception($e->getMessage(), $e->getCode(), $e);
             }
         }
 

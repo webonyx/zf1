@@ -344,9 +344,6 @@ class Zend_Db_Adapter_Mysqli extends Zend_Db_Adapter_Abstract
             $this->_stmt->close();
         }
         $stmtClass = $this->_defaultStmtClass;
-        if (!class_exists($stmtClass)) {
-            Zend_Loader::loadClass($stmtClass);
-        }
         $stmt = new $stmtClass($this, $sql);
         if ($stmt === false) {
             return false;
