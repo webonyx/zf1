@@ -17,9 +17,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/StorageService/Adapter.php';
-require_once 'Zend/Cloud/StorageService/Exception.php';
-
 /**
  * FileSystem adapter for unstructured cloud storage.
  *
@@ -75,7 +72,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * @param  array $options
      * @return false|string
      */
-    public function fetchItem($path, $options = array())
+    public function fetchItem($path, $options = null)
     {
         $filepath = $this->_getFullPath($path);
         $path     = realpath($filepath);
@@ -93,17 +90,23 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * WARNING: This operation overwrites any item that is located at
      * $destinationPath.
      *
-     * @TODO Support streams
-     *
      * @param  string $destinationPath
      * @param  mixed $data
      * @param  array $options
      * @return void
      */
-    public function storeItem($destinationPath, $data, $options = array())
+    public function storeItem($destinationPath, $data, $options = null)
     {
         $path = $this->_getFullPath($destinationPath);
-        file_put_contents($path, $data);
+        if (is_resource($data)) {
+            $stream = fopen($path, 'w+b');
+            if ( ! $stream || stream_copy_to_stream($data, $stream) === false || ! fclose($stream)) {
+                return;
+            }
+        } else {
+            file_put_contents($path, $data);
+        }
+
         chmod($path, 0775);
     }
 
@@ -114,7 +117,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * @param  array $options
      * @return void
      */
-    public function deleteItem($path, $options = array())
+    public function deleteItem($path, $options = null)
     {
         if (!isset($path)) {
             return;
@@ -139,7 +142,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * @param  array $options
      * @return void
      */
-    public function copyItem($sourcePath, $destinationPath, $options = array())
+    public function copyItem($sourcePath, $destinationPath, $options = null)
     {
         copy($this->_getFullPath($sourcePath), $this->_getFullPath($destinationPath));
     }
@@ -157,7 +160,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * @param  array $options
      * @return void
      */
-    public function moveItem($sourcePath, $destinationPath, $options = array())
+    public function moveItem($sourcePath, $destinationPath, $options = null)
     {
         rename($this->_getFullPath($sourcePath), $this->_getFullPath($destinationPath));
     }
@@ -206,7 +209,7 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * @param  array $options
      * @return array
      */
-    public function fetchMetadata($path, $options = array())
+    public function fetchMetadata($path, $options = null)
     {
         $fullPath = $this->_getFullPath($path);
         $metadata = null;
@@ -226,9 +229,8 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($destinationPath, $metadata, $options = array())
+    public function storeMetadata($destinationPath, $metadata, $options = null)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Storing metadata not implemented');
     }
 
@@ -241,7 +243,6 @@ class Zend_Cloud_StorageService_Adapter_FileSystem implements Zend_Cloud_Storage
      */
     public function deleteMetadata($path)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Deleting metadata not implemented');
     }
 

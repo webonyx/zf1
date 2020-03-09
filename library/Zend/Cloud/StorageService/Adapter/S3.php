@@ -17,10 +17,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Amazon/S3.php';
-require_once 'Zend/Cloud/StorageService/Adapter.php';
-require_once 'Zend/Cloud/StorageService/Exception.php';
-
 /**
  * S3 adapter for unstructured cloud storage.
  *
@@ -104,7 +100,7 @@ class Zend_Cloud_StorageService_Adapter_S3
      * @param  array $options
      * @return string
      */
-    public function fetchItem($path, $options = array())
+    public function fetchItem($path, $options = null)
     {
         $fullPath = $this->_getFullPath($path, $options);
         try {
@@ -131,7 +127,7 @@ class Zend_Cloud_StorageService_Adapter_S3
      * @param  array $options
      * @return void
      */
-    public function storeItem($destinationPath, $data, $options = array())
+    public function storeItem($destinationPath, $data, $options = null)
     {
         try {
             $fullPath = $this->_getFullPath($destinationPath, $options);
@@ -152,7 +148,7 @@ class Zend_Cloud_StorageService_Adapter_S3
      * @param  array $options
      * @return void
      */
-    public function deleteItem($path, $options = array())
+    public function deleteItem($path, $options = null)
     {
         try {
             $this->_s3->removeObject($this->_getFullPath($path, $options));
@@ -174,7 +170,7 @@ class Zend_Cloud_StorageService_Adapter_S3
      * @param  array $options
      * @return void
      */
-    public function copyItem($sourcePath, $destinationPath, $options = array())
+    public function copyItem($sourcePath, $destinationPath, $options = null)
     {
         try {
             $fullSourcePath = $this->_getFullPath($sourcePath, $options);
@@ -200,7 +196,7 @@ class Zend_Cloud_StorageService_Adapter_S3
      * @param  array $options
      * @return void
      */
-    public function moveItem($sourcePath, $destinationPath, $options = array())
+    public function moveItem($sourcePath, $destinationPath, $options = null)
     {
         try {
             $fullSourcePath = $this->_getFullPath($sourcePath, $options);
@@ -226,7 +222,6 @@ class Zend_Cloud_StorageService_Adapter_S3
      */
     public function renameItem($path, $name, $options = null)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Rename not implemented');
     }
 
@@ -257,7 +252,7 @@ class Zend_Cloud_StorageService_Adapter_S3
      * @param  array $options
      * @return array
      */
-    public function fetchMetadata($path, $options = array())
+    public function fetchMetadata($path, $options = null)
     {
         try {
             return $this->_s3->getInfo($this->_getFullPath($path, $options));
@@ -275,9 +270,8 @@ class Zend_Cloud_StorageService_Adapter_S3
      * @param  array $options
      * @return void
      */
-    public function storeMetadata($destinationPath, $metadata, $options = array())
+    public function storeMetadata($destinationPath, $metadata, $options = null)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Storing separate metadata is not supported, use storeItem() with \'metadata\' option key');
     }
 
@@ -290,7 +284,6 @@ class Zend_Cloud_StorageService_Adapter_S3
      */
     public function deleteMetadata($path)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('Deleting metadata not supported');
     }
 
@@ -308,13 +301,11 @@ class Zend_Cloud_StorageService_Adapter_S3
         } else if (isset($this->_defaultBucketName)) {
             $bucket = $this->_defaultBucketName;
         } else {
-            require_once 'Zend/Cloud/StorageService/Exception.php';
             throw new Zend_Cloud_StorageService_Exception('Bucket name must be specified for S3 adapter.');
         }
 
         if (isset($options[self::BUCKET_AS_DOMAIN])) {
             // TODO: support bucket domain names
-            require_once 'Zend/Cloud/StorageService/Exception.php';
             throw new Zend_Cloud_StorageService_Exception('The S3 adapter does not currently support buckets in domain names.');
         }
 
