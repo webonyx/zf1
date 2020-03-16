@@ -92,7 +92,7 @@ class Zend_Controller_Dispatcher_Standard extends Zend_Controller_Dispatcher_Abs
         if (is_string($directory)) {
             $this->addControllerDirectory($directory, $module);
         } elseif (is_array($directory)) {
-            foreach ((array) $directory as $module => $path) {
+            foreach ($directory as $module => $path) {
                 $this->addControllerDirectory($path, $module);
             }
         } else {

@@ -153,10 +153,11 @@ interface Zend_Controller_Dispatcher_Interface
      * Specify a string or an array; if an array is specified, all paths will be
      * added.
      *
-     * @param string|array $dir
+     * @param string|array $directory
+     * @param string $module
      * @return Zend_Controller_Dispatcher_Interface
      */
-    public function setControllerDirectory($path);
+    public function setControllerDirectory($directory, $module = null);
 
     /**
      * Return the currently set directory(ies) for controller file lookup
