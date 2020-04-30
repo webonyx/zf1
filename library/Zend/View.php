@@ -19,13 +19,6 @@
  * @version    $Id$
  */
 
-
-/**
- * Abstract master class for extension.
- */
-require_once 'Zend/View/Abstract.php';
-
-
 /**
  * Concrete class for handling view scripts.
  *
@@ -110,7 +103,6 @@ class Zend_View extends Zend_View_Abstract
         $this->_useViewStream = (bool) ini_get('short_open_tag') ? false : true;
         if ($this->_useViewStream) {
             if (!in_array('zend.view', stream_get_wrappers())) {
-                require_once 'Zend/View/Stream.php';
                 stream_wrapper_register('zend.view', 'Zend_View_Stream');
             }
         }
@@ -151,10 +143,15 @@ class Zend_View extends Zend_View_Abstract
      */
     protected function _run()
     {
+        $file = func_get_arg(0);
+        if (getenv('APP_DEBUG') && false !== strpos($file, '.phtml')) {
+            echo sprintf('<! %s ––>', func_get_arg(0));
+        }
+
         if ($this->_useViewStream && $this->useStreamWrapper()) {
-            include 'zend.view://' . func_get_arg(0);
+            include 'zend.view://' . $file;
         } else {
-            include func_get_arg(0);
+            include $file;
         }
     }
 }
