@@ -360,10 +360,6 @@ class Zend_Cache_Core
         if ($this->_options['automatic_serialization']) {
             // we need to serialize datas before storing them
             $data = serialize($data);
-        } else {
-            if (!is_string($data)) {
-                Zend_Cache::throwException("Datas must be string or set automatic_serialization = true");
-            }
         }
 
         // automatic cleaning
