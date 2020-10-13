@@ -340,7 +340,8 @@ abstract class Zend_Db_Table_Row_Abstract implements ArrayAccess, IteratorAggreg
         $info = $this->_table->info();
 
         if ($info['cols'] != array_keys($this->_data)) {
-            throw new Zend_Db_Table_Row_Exception('The specified Table does not have the same columns as the Row');
+            $this->_table->refreshMetadata();
+            $info = $this->_table->info();
         }
 
         if (! array_intersect((array) $this->_primary, $info['primary']) == (array) $this->_primary) {

@@ -668,6 +668,39 @@ abstract class Zend_Db_Table_Abstract
         return $this->_metadataCacheInClass;
     }
 
+    public function refreshMetadata()
+    {
+        // If $this has a metadata cache
+        if (null !== $this->_metadataCache) {
+            // Define the cache identifier where the metadata are saved
+
+            //get db configuration
+            $dbConfig = $this->_db->getConfig();
+
+            $port = isset($dbConfig['options']['port'])
+                ? ':'.$dbConfig['options']['port']
+                : (isset($dbConfig['port'])
+                    ? ':'.$dbConfig['port']
+                    : null);
+
+            $host = isset($dbConfig['options']['host'])
+                ? ':'.$dbConfig['options']['host']
+                : (isset($dbConfig['host'])
+                    ? ':'.$dbConfig['host']
+                    : null);
+
+            $cacheId = md5( // port:host/dbname:schema.table (based on availabilty)
+                $port . $host . '/'. $dbConfig['dbname'] . ':'
+                . $this->_schema. '.' . $this->_name
+            );
+
+            $this->_metadataCache->remove($cacheId);
+            $this->_cols = null;
+            $this->_metadata = [];
+            $this->_setupMetadata();
+        }
+    }
+
     /**
      * @param mixed $metadataCache Either a Cache object, or a string naming a Registry key
      * @return Zend_Cache_Core
