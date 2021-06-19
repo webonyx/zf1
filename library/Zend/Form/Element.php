@@ -18,18 +18,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-/** @see Zend_Filter */
-require_once 'Zend/Filter.php';
-
-/** @see Zend_Form */
-require_once 'Zend/Form.php';
-
-/** @see Zend_Validate_Interface */
-require_once 'Zend/Validate/Interface.php';
-
-/** @see Zend_Validate_Abstract */
-require_once 'Zend/Validate/Abstract.php';
-
 /**
  * Zend_Form_Element
  *
@@ -588,7 +576,7 @@ class Zend_Form_Element implements Zend_Validate_Interface
      * @param  string $key
      * @return void
      */
-    protected function _filterValue(&$value, &$key)
+    protected function _filterValue(&$value, $key)
     {
         foreach ($this->getFilters() as $filter) {
             $value = $filter->filter($value);
